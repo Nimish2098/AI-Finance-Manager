@@ -1,25 +1,27 @@
 package com.Nimish.AIFinanceManager.controller;
 
+import com.Nimish.AIFinanceManager.dto.LoginRequest;
 import com.Nimish.AIFinanceManager.dto.RegisterRequest;
-import com.Nimish.AIFinanceManager.service.UserService;
-import org.apache.coyote.Response;
+import com.Nimish.AIFinanceManager.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/auth")
 public class AuthController {
 
     @Autowired
-    private UserService userService;
+    private AuthService userService;
 
 
-    @PostMapping
-    public ResponseEntity<String> register(@PathVariable  RegisterRequest request){
-
-        
+    @PostMapping("/register")
+    public String register(@RequestBody RegisterRequest req){
+            return userService.register(req);
     }
 
+    @PostMapping("/login")
+    public String login(@RequestBody LoginRequest req){
+        String token = userService.login(req);
+        return token;
+    }
 }
