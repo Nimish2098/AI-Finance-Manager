@@ -1,13 +1,15 @@
 package com.Nimish.AIFinanceManager.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
+@Entity
+@Table(name = "roles")
 @Getter
 @Setter
-@Entity
-@Table(name="roles")
+@NoArgsConstructor  // Hibernate-friendly no-args constructor
+@AllArgsConstructor // optional, if you want to create Role objects easily
+@Builder            // optional, for builder pattern
 public class Role {
 
     @Id
@@ -15,10 +17,4 @@ public class Role {
     private Long id;
 
     private String name;
-    private Role(){}
-    private Role(String name){
-        this.name=name;
-    }
-
-
 }

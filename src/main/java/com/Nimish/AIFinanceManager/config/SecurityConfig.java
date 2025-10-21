@@ -21,17 +21,12 @@ public class SecurityConfig {
     }
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .securityMatcher("/**")
-                .authorizeHttpRequests(
-                        auth->auth.requestMatchers("/auth/**")
-                                .permitAll()
-                                .anyRequest()
-                                .authenticated())
-                .csrf(csrf->csrf.disable())
-                .httpBasic(httpBasic->httpBasic.disable())
-                .formLogin(form->form.disable());
+                .authorizeHttpRequests(auth -> auth.anyRequest().permitAll()) // Only one anyRequest
+                .csrf(csrf -> csrf.disable())
+                .httpBasic(httpBasic -> httpBasic.disable())
+                .formLogin(form -> form.disable());
 
         return http.build();
     }
