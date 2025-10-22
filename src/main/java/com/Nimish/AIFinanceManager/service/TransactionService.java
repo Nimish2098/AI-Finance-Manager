@@ -12,7 +12,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class TransactionService {
 
-    private TransactionRepository repository;
+    private final TransactionRepository repository;
 
     public String saveTransaction(Transaction transaction){
         repository.save(transaction);

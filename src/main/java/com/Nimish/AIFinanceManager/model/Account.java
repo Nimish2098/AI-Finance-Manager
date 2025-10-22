@@ -1,8 +1,20 @@
 package com.Nimish.AIFinanceManager.model;
 
-public class Account{
+import jakarta.persistence.*;
+import lombok.*;
+
+@Entity
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class Account {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    private Long userId;
+
     private String accountName;
     private String accountType;
+    private double balance;
 }
