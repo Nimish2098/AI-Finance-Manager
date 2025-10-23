@@ -1,45 +1,59 @@
 package com.Nimish.AIFinanceManager.service;
 
+import com.Nimish.AIFinanceManager.model.Account;
 import com.Nimish.AIFinanceManager.model.Transaction;
+import com.Nimish.AIFinanceManager.repository.AccountRepository;
 import com.Nimish.AIFinanceManager.repository.TransactionRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class TransactionService {
 
-    private final TransactionRepository repository;
+    private final TransactionRepository transactionRepository;
+    private final AccountRepository accountRepository;
 
-    public String saveTransaction(Transaction transaction){
-        repository.save(transaction);
-        return "Transaction Saved Successfully";
+    @Transactional
+    public Transaction saveTransaction(Transaction transaction,Long accountId){
+        Account account = accountRepository.findById(accountId)
+                .orElseThrow(()-> new RuntimeException("Account not Found"));
+        transaction.setAccount(account);
+
+        if(transaction.getType().equalsIgnoreCase("Income")){
+            account.setBalance(account.getBalance()+transaction.getAmount());
+        }
+        else if(transaction.getType().equalsIgnoreCase("Expense")){
+            account.setBalance(account.getBalance()-transaction.getAmount());
+        }
+
+        accountRepository.save(account);
+        return transactionRepository.save(transaction);
     }
 
 
     public List<Transaction> getAllTransaction(){
-        return repository.findAll();
+        return transactionRepository.findAll();
     }
 
     public String updateTransaction(Long transactionId,Transaction transaction){
-        Transaction savedTransaction = repository.findById(transactionId)
+        Transaction savedTransaction = transactionRepository.findById(transactionId)
                 .orElseThrow(()->new RuntimeException("Transaction not found."));
         savedTransaction.setAmount(transaction.getAmount());
         savedTransaction.setDate(transaction.getDate());
         savedTransaction.setType(transaction.getType());
         savedTransaction.setCategory(transaction.getCategory());
-        savedTransaction.setDescription(transaction.getDescription());
-        repository.save(savedTransaction);
+        transactionRepository.save(savedTransaction);
         return "Transaction updated Successfully";
     }
 
     public String deleteTransaction(Long transactionId){
-        Transaction savedTransaction = repository.findById(transactionId)
+        Transaction savedTransaction = transactionRepository.findById(transactionId)
                 .orElseThrow(()->new RuntimeException("Transaction not found."));
-        repository.delete(savedTransaction);
+        transactionRepository.delete(savedTransaction);
         return "Transaction deleted Successfully";
     }
 }

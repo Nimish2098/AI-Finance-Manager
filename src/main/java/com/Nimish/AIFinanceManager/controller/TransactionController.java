@@ -20,9 +20,9 @@ public class TransactionController {
 
     private final AnalysisService analysisService;
 
-    @PostMapping("/add")
-    public String addTransaction(@RequestBody Transaction transaction){
-        transactionService.saveTransaction(transaction);
+    @PostMapping("/add/{id}")
+    public String addTransaction(@RequestBody Transaction transaction, @PathVariable Long id){
+        transactionService.saveTransaction(transaction,id);
         return "Transaction Added";
     }
 
