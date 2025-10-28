@@ -7,8 +7,12 @@ import com.Nimish.AIFinanceManager.repository.TransactionRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -16,23 +20,44 @@ public class TransactionService {
 
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
+    private final RestTemplate restTemplate;
+
 
     @Transactional
-    public Transaction saveTransaction(Transaction transaction,Long accountId){
+    public Transaction saveTransaction(Transaction transaction, Long accountId) {
+        // 1️⃣ Find the account
         Account account = accountRepository.findById(accountId)
-                .orElseThrow(()-> new RuntimeException("Account not Found"));
+                .orElseThrow(() -> new RuntimeException("Account not found"));
         transaction.setAccount(account);
 
-        if(transaction.getType().equalsIgnoreCase("Income")){
-            account.setBalance(account.getBalance()+transaction.getAmount());
-        }
-        else if(transaction.getType().equalsIgnoreCase("Expense")){
-            account.setBalance(account.getBalance()-transaction.getAmount());
+        // 2️⃣ Update balance based on transaction type
+        if (transaction.getType().equalsIgnoreCase("Income")) {
+            account.setBalance(account.getBalance() + transaction.getAmount());
+        } else if (transaction.getType().equalsIgnoreCase("Expense")) {
+            account.setBalance(account.getBalance() - transaction.getAmount());
         }
 
         accountRepository.save(account);
+
+        String flaskUrl = "http://localhost:5000/predict";
+        Map<String, Object> request = new HashMap<>();
+        request.put("amount", transaction.getAmount());
+        request.put("type", transaction.getType());
+        request.put("category", transaction.getCategory());
+        request.put("balance", account.getBalance());
+
+        RestTemplate restTemplate = new RestTemplate();
+        Map<String, Object> response = restTemplate.postForObject(flaskUrl, request, Map.class);
+
+        // 5️⃣ Handle AI prediction
+        if (response != null) {
+            System.out.println("AI prediction: " + response.get("prediction"));
+        }
+
+        // 6️⃣ Finally, save transaction
         return transactionRepository.save(transaction);
     }
+
 
 
     public List<Transaction> getAllTransaction(){

@@ -26,4 +26,7 @@ public class Transaction {
     @JoinColumn(name="account_id")
     @JsonBackReference
     private Account account;
+
+    @Column(name="ai_label")
+    private String aiLabel;
 }
