@@ -3,6 +3,7 @@ package com.Nimish.AIFinanceManager.service;
 import com.Nimish.AIFinanceManager.model.Account;
 import com.Nimish.AIFinanceManager.model.Transaction;
 import com.Nimish.AIFinanceManager.repository.AccountRepository;
+import com.Nimish.AIFinanceManager.repository.FinancialInsightRepository;
 import com.Nimish.AIFinanceManager.repository.TransactionRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,8 @@ public class TransactionService {
     private final TransactionRepository transactionRepository;
     private final AccountRepository accountRepository;
     private final RestTemplate restTemplate;
+    private FinancialInsightRepository financialInsightRepository;
+
 
 
     @Transactional
@@ -50,8 +53,17 @@ public class TransactionService {
         Map<String, Object> response = restTemplate.postForObject(flaskUrl, request, Map.class);
 
         // 5️⃣ Handle AI prediction
-        if (response != null) {
-            System.out.println("AI prediction: " + response.get("prediction"));
+        if (response != null && response.get("prediction") != null) {
+            FinancialInsight insight = new FinancialInsight();
+            insight.setMessage(response.get("prediction").toString());
+            insight.setAmount(transaction.getAmount());
+            insight.setType(transaction.getType());
+            insight.setCategory(transaction.getCategory());
+            insight.setAccount(account);
+            insight.setTransaction(transaction);
+
+            financialInsightRepository.save(insight);
+            System.out.println("AI Insight saved: " + insight.getMessage());
         }
 
         // 6️⃣ Finally, save transaction
