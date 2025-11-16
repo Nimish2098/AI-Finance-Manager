@@ -1,6 +1,6 @@
 package com.Nimish.AIFinanceManager.model;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,10 +23,8 @@ public class Transaction {
     private LocalDateTime date;
 
     @ManyToOne
-    @JoinColumn(name="account_id")
-    @JsonBackReference
-    private Account account;
+    @JoinColumn(name="userId")
+    @JsonIgnore
+    private User user;
 
-    @Column(name="ai_label")
-    private String aiLabel;
 }

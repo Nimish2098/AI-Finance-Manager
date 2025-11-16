@@ -15,16 +15,16 @@ import java.util.stream.Collectors;
 public class AnalysisService {
     private final TransactionService transactionService;
 
-    public Map<String,Object> getSummary(){
-        List<Transaction> transactions = transactionService.getAllTransaction();
+    public Map<String,Object> getSummary(Long userId){
+        List<Transaction> transactions = transactionService.getTransactionsByUser(userId);
 
         double totalIncome = transactions
-                .stream().filter(t->t.getType().equalsIgnoreCase("credit"))
+                .stream().filter(t->t.getType().equalsIgnoreCase("Income"))
                 .mapToDouble(Transaction::getAmount)
                 .sum();
 
         double totalExpense = transactions.stream()
-                .filter(t->t.getType().equalsIgnoreCase("debit"))
+                .filter(t->t.getType().equalsIgnoreCase("Expense"))
                 .mapToDouble(Transaction::getAmount)
                 .sum();
 
@@ -48,9 +48,9 @@ public class AnalysisService {
         return summary;
     }
 
-    public Map<String,String> getInsights(){
-        Map<String,Object> summary = getSummary();
-        double savingsPercent = (double) summary.get("Savings Percent");
+    public Map<String,String> getInsights(Long userId){
+        Map<String,Object> summary = getSummary(userId);
+        double savingsPercent = (double) summary.get("savingPercent");
 
         String message;
         if (savingsPercent < 20) {

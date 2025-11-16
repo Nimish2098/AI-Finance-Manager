@@ -2,6 +2,7 @@ package com.Nimish.AIFinanceManager.config;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
@@ -9,10 +10,12 @@ import java.util.Date;
 
 @Component
 public class JwtUtil {
-    private static final String SECRET = "secretkeyshouldbebiggerthan256bitsyoukonw";
-    private static final long expiration_time=1000*60*60*5;
-    private final Key key = Keys.hmacShaKeyFor(SECRET.getBytes());
+    private static final long expiration_time = 1000 * 60 * 60 * 5; // 5 hours
+    private final Key key;
 
+    public JwtUtil(@Value("${jwt.secret}") String secret) {
+        this.key = Keys.hmacShaKeyFor(secret.getBytes());
+    }
     public String generateToken(String username){
         return Jwts.builder()
                 .setSubject(username)
@@ -30,17 +33,9 @@ public class JwtUtil {
     public boolean isTokenValid(String token){
 
         try {
-            Jwts.parser().setSigningKey(key).build().parseClaimsJwt(token);
+            Jwts.parser().setSigningKey(key).build().parseSignedClaims(token);
             return true;
-        } catch (ExpiredJwtException e) {
-            throw new RuntimeException(e);
-        } catch (UnsupportedJwtException e) {
-            throw new RuntimeException(e);
-        } catch (MalformedJwtException e) {
-            throw new RuntimeException(e);
-        } catch (io.jsonwebtoken.security.SecurityException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }

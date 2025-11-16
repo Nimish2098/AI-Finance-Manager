@@ -13,6 +13,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/transactions")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "*")
 public class TransactionController {
 
 
@@ -20,36 +21,36 @@ public class TransactionController {
 
     private final AnalysisService analysisService;
 
-    @PostMapping("/add/{id}")
+    @PostMapping("/{userId}")
     public String addTransaction(@RequestBody Transaction transaction, @PathVariable Long id){
         transactionService.saveTransaction(transaction,id);
         return "Transaction Added";
     }
 
     @GetMapping
-    public List<Transaction> getAllTransactions(){
-        return transactionService.getAllTransaction();
+    public List<Transaction> getTransactionsByUser(@PathVariable Long id){
+        return transactionService.getTransactionsByUser(id);
     }
 
-    @PostMapping("/update/{id}")
+    @PostMapping("/{id}")
     public String updateTransaction(@RequestBody Transaction transaction,@PathVariable Long id){
         transactionService.updateTransaction(id,transaction);
         return "Transaction Updated Succcessfully";
     }
 
-    @DeleteMapping("/delete/{id}")
-    public String deleteTransaction(@PathVariable Long id){
-        transactionService.deleteTransaction(id);
+    @DeleteMapping("/delete/{userId}")
+    public String deleteTransaction(@PathVariable Long userId){
+        transactionService.deleteTransaction(userId);
         return "Transaction deleted Sucessfully";
     }
 
-    @GetMapping("/summary")
-    public Map<String ,Object> getSummary(){
-        return analysisService.getSummary();
+    @GetMapping("/summary/{userId}")
+    public Map<String ,Object> getSummary(@PathVariable Long userId){
+        return analysisService.getSummary(userId);
     }
 
-    @GetMapping("/insights")
-    public Map<String,String> getInsights(){
-        return analysisService.getInsights();
+    @GetMapping("/insights/{userId}")
+    public Map<String,String> getInsights(@PathVariable Long userId){
+        return analysisService.getInsights(userId);
     }
 }
