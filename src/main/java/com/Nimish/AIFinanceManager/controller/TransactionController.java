@@ -22,17 +22,17 @@ public class TransactionController {
     private final AnalysisService analysisService;
 
     @PostMapping("/{userId}")
-    public String addTransaction(@RequestBody Transaction transaction, @PathVariable Long id){
-        transactionService.saveTransaction(transaction,id);
+    public String addTransaction(@RequestBody Transaction transaction, @PathVariable Long userId){
+        transactionService.saveTransaction(transaction,userId);
         return "Transaction Added";
     }
 
-    @GetMapping
+    @GetMapping("/{id}")
     public List<Transaction> getTransactionsByUser(@PathVariable Long id){
         return transactionService.getTransactionsByUser(id);
     }
 
-    @PostMapping("/{id}")
+    @PostMapping("/update/{id}")
     public String updateTransaction(@RequestBody Transaction transaction,@PathVariable Long id){
         transactionService.updateTransaction(id,transaction);
         return "Transaction Updated Succcessfully";

@@ -1,3 +1,42 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: finance-mysql
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: ${DB_NAME:-financeproject_db}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    build: .
+    container_name: finance-app
+    restart: unless-stopped
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      DB_HOST: mysql
+      DB_PORT: 3306
+      DB_NAME: ${DB_NAME:-financeproject_db}
+      DB_USERNAME: root
+      DB_PASSWORD: ${DB_PASSWORD:-Ni@12345}
+      JWT_SECRET: ${JWT_SECRET:-secretkeyshouldbebiggerthan256bitsyoukonw}
+    ports:
+      - "8080:8080"
+
+volumes:
+  mysql_data:
 version : '3.8'
 
 services:

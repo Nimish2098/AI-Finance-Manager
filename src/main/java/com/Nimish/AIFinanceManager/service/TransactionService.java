@@ -18,8 +18,8 @@ public class TransactionService {
     @Transactional
     public Transaction saveTransaction(Transaction transaction, Long userId) {
         User user = new User();
-        user.setUserId(userId);
-        transactiono.setUser(user);
+        user.setId(userId);
+        transaction.setUser(user);
         return transactionRepository.save(transaction);
     }
 
