@@ -23,10 +23,7 @@ public class TransactionService {
         return transactionRepository.save(transaction);
     }
 
-    /**
-     * Finds all transactions for a specific user.
-     * Assumes TransactionRepository has a method: List<Transaction> findByUserId(Long userId);
-     */
+
     public List<Transaction> getTransactionsByUser(Long userId) {
         return transactionRepository.findByUserId(userId);
     }
@@ -35,21 +32,21 @@ public class TransactionService {
         return transactionRepository.findAll();
     }
 
-    public String updateTransaction(Long transactionId, Transaction transaction) {
+    public Transaction updateTransaction(Long transactionId, Transaction transaction) {
         Transaction savedTransaction = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new RuntimeException("Transaction not found."));
         savedTransaction.setAmount(transaction.getAmount());
         savedTransaction.setDate(transaction.getDate());
+        savedTransaction.setAccount(transaction.getAccount());
         savedTransaction.setType(transaction.getType());
         savedTransaction.setCategory(transaction.getCategory());
-        transactionRepository.save(savedTransaction);
-        return "Transaction updated Successfully";
-    }
+        return transactionRepository.save(savedTransaction);
 
-    public String deleteTransaction(Long transactionId) {
+    }
+    public void deleteTransaction(Long transactionId) {
         Transaction savedTransaction = transactionRepository.findById(transactionId)
                 .orElseThrow(() -> new RuntimeException("Transaction not found."));
         transactionRepository.delete(savedTransaction);
-        return "Transaction deleted Successfully";
+
     }
 }

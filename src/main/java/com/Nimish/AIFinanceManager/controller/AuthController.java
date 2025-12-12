@@ -4,13 +4,11 @@ import com.Nimish.AIFinanceManager.dto.LoginRequest;
 import com.Nimish.AIFinanceManager.dto.RegisterRequest;
 import com.Nimish.AIFinanceManager.service.AuthService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
-@CrossOrigin(origins = "*")
 public class AuthController {
 
     private final AuthService authService;
