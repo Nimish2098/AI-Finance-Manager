@@ -45,10 +45,14 @@ public class TransactionController {
         return ResponseEntity.status(HttpStatus.OK).body(updatedTransaction);
     }
 
-    @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<String> deleteTransaction(@PathVariable Long userId){
-        transactionService.deleteTransaction(userId);
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Deleted");
+    @DeleteMapping("/{transactionId}")
+    public ResponseEntity<Map<String, Object>> deleteTransaction(
+            @PathVariable Long transactionId) {
+
+        transactionService.deleteTransaction(transactionId);
+        return ResponseEntity.ok(
+                Map.of("success", true, "message", "Deleted")
+        );
     }
 
     @GetMapping("/summary/{userId}")
