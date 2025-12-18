@@ -7,7 +7,6 @@ C:\NPC\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\config\WebCo
 C:\NPC\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\controller\AccountController.java
 C:\NPC\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\controller\AuthController.java
 C:\NPC\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\controller\BudgetController.java
-C:\NPC\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\controller\InsightController.java
 C:\NPC\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\controller\TransactionController.java
 C:\NPC\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\dto\AuthResponse.java
 C:\NPC\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\dto\LoginRequest.java

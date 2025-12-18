@@ -31,6 +31,5 @@ com\Nimish\AIFinanceManager\model\Budget$BudgetBuilder.class
 com\Nimish\AIFinanceManager\service\AccountService.class
 com\Nimish\AIFinanceManager\dto\LoginRequest.class
 com\Nimish\AIFinanceManager\config\JwtAuthenticationFilter.class
-com\Nimish\AIFinanceManager\controller\InsightController.class
 com\Nimish\AIFinanceManager\controller\TransactionController.class
 com\Nimish\AIFinanceManager\model\Account.class
