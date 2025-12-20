@@ -21,7 +21,8 @@ public class Budget {
     private Long id;
     private String month;
     private String category;
-
-    private double limitAmount;
+    private String name;
+    private double limit;
+    private double spent; // This will be calculated from transactions
 
 }

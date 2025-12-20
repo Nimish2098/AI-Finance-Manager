@@ -21,7 +21,7 @@ public class BudgetController {
    }
 
    @PostMapping("/add")
-    public Budget addBudget(Budget budget){
+    public Budget addBudget(@RequestBody Budget budget){
        return budgetService.saveBudget(budget);
    }
 
