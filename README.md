@@ -11,7 +11,7 @@
 **Prerequisites**
 - JDK 17 or newer installed
 - Maven (optional — the wrapper is included)
-- Docker & Docker Compose (if you plan to run with containers)
+- Docker & Docker Compose 
 
 **Run Locally (Development)**
 - Windows (using bundled wrapper):
