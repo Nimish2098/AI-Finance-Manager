@@ -4,7 +4,6 @@ com\Nimish\AIFinanceManager\model\Transaction.class
 com\Nimish\AIFinanceManager\model\Budget.class
 com\Nimish\AIFinanceManager\model\Account$AccountBuilder.class
 com\Nimish\AIFinanceManager\repository\UserRepository.class
-com\Nimish\AIFinanceManager\service\FinancialInsight.class
 com\Nimish\AIFinanceManager\config\WebConfig.class
 com\Nimish\AIFinanceManager\AiFinanceManagerApplication.class
 com\Nimish\AIFinanceManager\config\RestTemplateConfig.class

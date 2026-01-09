@@ -1,7 +1,5 @@
-package com.Nimish.AIFinanceManager.service;
+package com.Nimish.AIFinanceManager.model;
 
-import com.Nimish.AIFinanceManager.model.Account;
-import com.Nimish.AIFinanceManager.model.Transaction;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

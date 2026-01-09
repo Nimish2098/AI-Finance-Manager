@@ -5,6 +5,7 @@ C:\NPC\AI Finance Projext\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceM
 C:\NPC\AI Finance Projext\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\config\SecurityConfig.java
 C:\NPC\AI Finance Projext\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\config\WebConfig.java
 C:\NPC\AI Finance Projext\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\controller\AccountController.java
+C:\NPC\AI Finance Projext\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\controller\AnalyticsController.java
 C:\NPC\AI Finance Projext\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\controller\AuthController.java
 C:\NPC\AI Finance Projext\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\controller\BudgetController.java
 C:\NPC\AI Finance Projext\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\controller\TransactionController.java
@@ -13,6 +14,7 @@ C:\NPC\AI Finance Projext\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceM
 C:\NPC\AI Finance Projext\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\dto\RegisterRequest.java
 C:\NPC\AI Finance Projext\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\model\Account.java
 C:\NPC\AI Finance Projext\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\model\Budget.java
+C:\NPC\AI Finance Projext\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\model\FinancialInsight.java
 C:\NPC\AI Finance Projext\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\model\Role.java
 C:\NPC\AI Finance Projext\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\model\Transaction.java
 C:\NPC\AI Finance Projext\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\model\User.java
@@ -26,6 +28,5 @@ C:\NPC\AI Finance Projext\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceM
 C:\NPC\AI Finance Projext\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\service\AnalysisService.java
 C:\NPC\AI Finance Projext\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\service\AuthService.java
 C:\NPC\AI Finance Projext\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\service\BudgetService.java
-C:\NPC\AI Finance Projext\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\service\FinancialInsight.java
 C:\NPC\AI Finance Projext\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\service\TransactionService.java
 C:\NPC\AI Finance Projext\AI-Finance-Manager\src\main\java\com\Nimish\AIFinanceManager\service\UserService.java

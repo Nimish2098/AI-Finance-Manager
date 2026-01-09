@@ -43,9 +43,20 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/auth/**").permitAll()
+                        //Transaction endpoints
                         .requestMatchers(HttpMethod.GET, "/api/transactions/**").authenticated()
                         .requestMatchers(HttpMethod.POST, "/api/transactions/**").authenticated()
                         .requestMatchers(HttpMethod.DELETE, "/api/transactions/**").authenticated()
+
+                        .requestMatchers(HttpMethod.GET,"/account/**").authenticated()
+                        .requestMatchers(HttpMethod.POST,"/account/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE,"/account/**").authenticated()
+
+                        .requestMatchers(HttpMethod.GET,"/budget/**").authenticated()
+                        .requestMatchers(HttpMethod.POST,"/budget/**").authenticated()
+                        .requestMatchers(HttpMethod.DELETE,"/budget/**").authenticated()
+
+                        .requestMatchers(HttpMethod.GET,"/analytics/**").authenticated()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

@@ -66,9 +66,7 @@
 **Contributing**
 - Open a pull request with a clear description and run tests locally before submitting.
 
-**License**
-- Check project root for a LICENSE file; if none exists, contact the repo owner to confirm licensing.
+
 
 ----
 
-If you'd like, I can expand sections (example env variables, API docs, or health endpoints) or add a short quickstart example tuned to your current dev database.
