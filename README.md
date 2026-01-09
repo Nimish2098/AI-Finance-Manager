@@ -57,6 +57,9 @@
 - `mvnw`, `mvnw.cmd` — Maven wrapper
 - `docker-compose.yml`, `Dockerfile` — containerization and deployment helpers
 
+<img src="./docs/datamodel.png" alt="Data Model" width="600"/>
+
+
 **Useful Commands**
 - Start locally (dev): `./mvnw spring-boot:run` or `mvnw.cmd spring-boot:run`
 - Build jar: `./mvnw package` or `mvnw.cmd package`
