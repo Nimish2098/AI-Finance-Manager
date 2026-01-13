@@ -1,7 +1,0 @@
-
-.mvn/
-.idea/
-*.iml
-.env
-.git
-.gitignore
