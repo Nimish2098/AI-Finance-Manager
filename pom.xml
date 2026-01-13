@@ -9,7 +9,7 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.project</groupId>
-	<artifactId>Personal Finance Backend</artifactId>
+	<artifactId>financeApp</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>Personal Finance Tracker</name>
 	<description>Personal Finance Tracker</description>
@@ -97,7 +97,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-validation</artifactId>
 		</dependency>
-
 
 		<dependency>
 			<groupId>org.springdoc</groupId>
