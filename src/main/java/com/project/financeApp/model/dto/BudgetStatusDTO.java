@@ -1,16 +1,17 @@
 package com.project.financeApp.model.dto;
 
+
 import java.math.BigDecimal;
 import java.util.UUID;
 
-
-public record BudgetResponseDTO(
-        UUID id,
-        UUID categoryId,      // needed for editing
+public record BudgetStatusDTO(
+        UUID budgetId,
         String categoryName,
         BigDecimal limitAmount,
         BigDecimal spentAmount,
+        BigDecimal remainingAmount,
+        double percentageUsed,
+        boolean isExceeded,
         int month,
         int year
 ) {}
-

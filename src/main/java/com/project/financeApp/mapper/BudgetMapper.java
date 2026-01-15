@@ -6,6 +6,8 @@ import com.project.financeApp.model.entity.Budget;
 import com.project.financeApp.model.entity.Category;
 import com.project.financeApp.model.entity.User;
 
+import java.math.BigDecimal;
+
 public class BudgetMapper {
 
     private BudgetMapper() {}
@@ -24,14 +26,15 @@ public class BudgetMapper {
                 .build();
     }
 
-    public static BudgetResponseDTO toResponse(Budget entity) {
+    public static BudgetResponseDTO toResponse(Budget entity, BigDecimal spentAmount) {
         return new BudgetResponseDTO(
                 entity.getId(),
+                entity.getCategory().getId(),
                 entity.getCategory().getName(),
                 entity.getLimitAmount(),
+                spentAmount,
                 entity.getMonth(),
                 entity.getYear()
         );
     }
 }
-
