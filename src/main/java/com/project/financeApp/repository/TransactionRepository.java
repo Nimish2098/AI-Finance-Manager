@@ -28,65 +28,73 @@ public interface TransactionRepository extends JpaRepository<Transaction, UUID> 
     Page<Transaction> findByUser(User user, Pageable pageable);
 
     // For daily trends
-            @Query("""
-                SELECT new com.project.financeApp.model.dto.TrendDataDTO(
-                    CAST(t.transactionDate AS string),
-                    COALESCE(SUM(CASE WHEN t.type = 'INCOME' THEN t.amount ELSE 0 END), 0),
-                    COALESCE(SUM(CASE WHEN t.type = 'EXPENSE' THEN t.amount ELSE 0 END), 0),
-                    COALESCE(SUM(CASE WHEN t.type = 'INCOME' THEN t.amount ELSE -t.amount END), 0)
-                )
-                FROM Transaction t
-                WHERE t.user = :user 
-                    AND YEAR(t.transactionDate) = :year 
-                    AND MONTH(t.transactionDate) = :month
-                GROUP BY t.transactionDate
-                ORDER BY t.transactionDate
-                """)
+        @Query("""
+            SELECT new com.project.financeApp.model.dto.TrendDataDTO(
+                FUNCTION('DATE_FORMAT', t.transactionDate, '%Y-%m-%d'),
+                SUM(CASE WHEN t.type = 'INCOME' THEN t.amount ELSE 0 END),
+                SUM(CASE WHEN t.type = 'EXPENSE' THEN t.amount ELSE 0 END),
+                SUM(CASE WHEN t.type = 'INCOME' THEN t.amount ELSE -t.amount END)
+            )
+            FROM Transaction t
+            WHERE t.user = :user
+            AND FUNCTION('YEAR', t.transactionDate) = :year
+            AND FUNCTION('MONTH', t.transactionDate) = :month
+            GROUP BY t.transactionDate
+            ORDER BY t.transactionDate
+            """)
             List<TrendDataDTO> findDailyTrendsByUserAndYearAndMonth(
                 @Param("user") User user,
                 @Param("year") int year,
                 @Param("month") int month
             );
+            
 
             // For weekly trends
             @Query("""
                 SELECT new com.project.financeApp.model.dto.TrendDataDTO(
-                    CONCAT('Week ', CAST(WEEK(t.transactionDate, 1) - WEEK(:startDate, 1) + 1 AS string)),
-                    COALESCE(SUM(CASE WHEN t.type = 'INCOME' THEN t.amount ELSE 0 END), 0),
-                    COALESCE(SUM(CASE WHEN t.type = 'EXPENSE' THEN t.amount ELSE 0 END), 0),
-                    COALESCE(SUM(CASE WHEN t.type = 'INCOME' THEN t.amount ELSE -t.amount END), 0)
+                    CONCAT(
+                        'Week ',
+                        FUNCTION('WEEK', t.transactionDate) - FUNCTION('WEEK', :startDate) + 1
+                    ),
+                    SUM(CASE WHEN t.type = 'INCOME' THEN t.amount ELSE 0 END),
+                    SUM(CASE WHEN t.type = 'EXPENSE' THEN t.amount ELSE 0 END),
+                    SUM(CASE WHEN t.type = 'INCOME' THEN t.amount ELSE -t.amount END)
                 )
                 FROM Transaction t
-                WHERE t.user = :user 
-                    AND t.transactionDate >= :startDate 
-                    AND t.transactionDate <= :endDate
-                GROUP BY YEAR(t.transactionDate), WEEK(t.transactionDate, 1)
-                ORDER BY YEAR(t.transactionDate), WEEK(t.transactionDate, 1)
+                WHERE t.user = :user
+                  AND t.transactionDate BETWEEN :startDate AND :endDate
+                GROUP BY FUNCTION('YEAR', t.transactionDate),
+                         FUNCTION('WEEK', t.transactionDate)
+                ORDER BY FUNCTION('YEAR', t.transactionDate),
+                         FUNCTION('WEEK', t.transactionDate)
                 """)
-            List<TrendDataDTO> findWeeklyTrendsByUserAndDateRange(
-                @Param("user") User user,
-                @Param("startDate") LocalDate startDate,
-                @Param("endDate") LocalDate endDate
-            );
+                List<TrendDataDTO> findWeeklyTrendsByUserAndDateRange(
+                    @Param("user") User user,
+                    @Param("startDate") LocalDate startDate,
+                    @Param("endDate") LocalDate endDate
+                );
+                
 
             // For monthly trends
             @Query("""
                 SELECT new com.project.financeApp.model.dto.TrendDataDTO(
                     FUNCTION('MONTHNAME', t.transactionDate),
-                    COALESCE(SUM(CASE WHEN t.type = 'INCOME' THEN t.amount ELSE 0 END), 0),
-                    COALESCE(SUM(CASE WHEN t.type = 'EXPENSE' THEN t.amount ELSE 0 END), 0),
-                    COALESCE(SUM(CASE WHEN t.type = 'INCOME' THEN t.amount ELSE -t.amount END), 0)
+                    SUM(CASE WHEN t.type = 'INCOME' THEN t.amount ELSE 0 END),
+                    SUM(CASE WHEN t.type = 'EXPENSE' THEN t.amount ELSE 0 END),
+                    SUM(CASE WHEN t.type = 'INCOME' THEN t.amount ELSE -t.amount END)
                 )
                 FROM Transaction t
-                WHERE t.user = :user 
-                    AND YEAR(t.transactionDate) = :year
-                GROUP BY YEAR(t.transactionDate), MONTH(t.transactionDate)
-                ORDER BY MONTH(t.transactionDate)
+                WHERE t.user = :user
+                AND FUNCTION('YEAR', t.transactionDate) = :year
+                GROUP BY FUNCTION('YEAR', t.transactionDate),
+                        FUNCTION('MONTH', t.transactionDate)
+                ORDER BY FUNCTION('MONTH', t.transactionDate)
                 """)
-            List<TrendDataDTO> findMonthlyTrendsByUserAndYear(
-                @Param("user") User user,
-                @Param("year") int year
-            );
+                List<TrendDataDTO> findMonthlyTrendsByUserAndYear(
+                    @Param("user") User user,
+                    @Param("year") int year
+                );
+
 
             // For cash flow - get transactions for a month ordered by date
             List<Transaction> findByUserAndTransactionDateBetweenOrderByTransactionDateAsc(
