@@ -10,12 +10,17 @@ import com.project.financeApp.repository.CategoryRepository;
 import com.project.financeApp.repository.TransactionRepository;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
-
+import java.time.temporal.WeekFields;
+import java.util.Locale;
+import java.util.stream.Collectors;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -201,6 +206,233 @@ public class TransactionServiceImpl implements TransactionService {
                 expense,
                 income.subtract(expense),
                 breakdown
+        );
+    }
+    @Cacheable(value = "trends", key = "#period + '_' + #year + '_' + (#month != null ? #month : 'all')")
+    @Override
+    public List<TrendDataDTO> getSpendingTrends(String period, int year, Integer month) {
+        User user = userService.getCurrentUser();
+
+        switch (period.toLowerCase()) {
+            case "daily" -> {
+                if (month == null) {
+                    throw new IllegalArgumentException("Month is required for daily trends");
+                }
+                return getDailyTrends(user, year, month);
+            }
+            case "weekly" -> {
+                if (month == null) {
+                    throw new IllegalArgumentException("Month is required for weekly trends");
+                }
+                return getWeeklyTrends(user, year, month);
+            }
+            case "monthly" -> {
+                return getMonthlyTrends(user, year);
+            }
+            default -> throw new IllegalArgumentException("Invalid period. Use: daily, weekly, or monthly");
+        }
+    }
+
+    private List<TrendDataDTO> getDailyTrends(User user, int year, int month) {
+        LocalDate start = LocalDate.of(year, month, 1);
+        LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
+
+        List<Transaction> transactions = transactionRepository
+                .findByUserAndTransactionDateBetween(user, start, end);
+
+        // Group by date
+        Map<LocalDate, List<Transaction>> byDate = transactions.stream()
+                .collect(Collectors.groupingBy(Transaction::getTransactionDate));
+
+        List<TrendDataDTO> trends = new ArrayList<>();
+        for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)) {
+            List<Transaction> dayTransactions = byDate.getOrDefault(date, List.of());
+
+            BigDecimal income = dayTransactions.stream()
+                    .filter(t -> t.getType() == TransactionType.INCOME)
+                    .map(Transaction::getAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            BigDecimal expense = dayTransactions.stream()
+                    .filter(t -> t.getType() == TransactionType.EXPENSE)
+                    .map(Transaction::getAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            trends.add(new TrendDataDTO(
+                    date.toString(),
+                    income,
+                    expense,
+                    income.subtract(expense)
+            ));
+        }
+        return trends;
+    }
+
+    private List<TrendDataDTO> getWeeklyTrends(User user, int year, int month) {
+        LocalDate start = LocalDate.of(year, month, 1);
+        LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
+
+        List<Transaction> transactions = transactionRepository
+                .findByUserAndTransactionDateBetween(user, start, end);
+
+        WeekFields weekFields = WeekFields.of(Locale.getDefault());
+
+        // Group by week
+        Map<Integer, List<Transaction>> byWeek = transactions.stream()
+                .collect(Collectors.groupingBy(
+                        t -> t.getTransactionDate().get(weekFields.weekOfYear())
+                ));
+
+        int firstWeek = start.get(weekFields.weekOfYear());
+        int lastWeek = end.get(weekFields.weekOfYear());
+
+        List<TrendDataDTO> trends = new ArrayList<>();
+        for (int week = firstWeek; week <= lastWeek; week++) {
+            List<Transaction> weekTransactions = byWeek.getOrDefault(week, List.of());
+
+            BigDecimal income = weekTransactions.stream()
+                    .filter(t -> t.getType() == TransactionType.INCOME)
+                    .map(Transaction::getAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            BigDecimal expense = weekTransactions.stream()
+                    .filter(t -> t.getType() == TransactionType.EXPENSE)
+                    .map(Transaction::getAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            trends.add(new TrendDataDTO(
+                    "Week " + (week - firstWeek + 1),
+                    income,
+                    expense,
+                    income.subtract(expense)
+            ));
+        }
+        return trends;
+    }
+
+    private List<TrendDataDTO> getMonthlyTrends(User user, int year) {
+        LocalDate start = LocalDate.of(year, 1, 1);
+        LocalDate end = LocalDate.of(year, 12, 31);
+
+        List<Transaction> transactions = transactionRepository
+                .findByUserAndTransactionDateBetween(user, start, end);
+
+        // Group by month
+        Map<Integer, List<Transaction>> byMonth = transactions.stream()
+                .collect(Collectors.groupingBy(t -> t.getTransactionDate().getMonthValue()));
+
+        List<TrendDataDTO> trends = new ArrayList<>();
+        String[] monthNames = {"January", "February", "March", "April", "May", "June",
+                "July", "August", "September", "October", "November", "December"};
+
+        for (int month = 1; month <= 12; month++) {
+            List<Transaction> monthTransactions = byMonth.getOrDefault(month, List.of());
+
+            BigDecimal income = monthTransactions.stream()
+                    .filter(t -> t.getType() == TransactionType.INCOME)
+                    .map(Transaction::getAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            BigDecimal expense = monthTransactions.stream()
+                    .filter(t -> t.getType() == TransactionType.EXPENSE)
+                    .map(Transaction::getAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            trends.add(new TrendDataDTO(
+                    monthNames[month - 1],
+                    income,
+                    expense,
+                    income.subtract(expense)
+            ));
+        }
+        return trends;
+    }
+    @Cacheable(value = "cashflow", key = "#month + '_' + #year")
+    @Override
+    public CashFlowDTO getCashFlowAnalysis(int month, int year) {
+        User user = userService.getCurrentUser();
+
+        LocalDate start = LocalDate.of(year, month, 1);
+        LocalDate end = start.withDayOfMonth(start.lengthOfMonth());
+
+        // Get opening balance (sum of all account balances before this month)
+        LocalDate beforeMonth = start.minusDays(1);
+        List<Transaction> beforeTransactions = transactionRepository
+                .findByUserAndTransactionDateBetween(
+                        user,
+                        LocalDate.of(1900, 1, 1), // Start from beginning, or track initial balances
+                        beforeMonth
+                );
+
+        // Calculate opening balance from all accounts
+        BigDecimal openingBalance = accountRepository.findByUser(user).stream()
+                .map(Account::getBalance)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // Subtract transactions before this month to get opening balance
+        for (Transaction tx : beforeTransactions) {
+            if (tx.getType() == TransactionType.INCOME) {
+                openingBalance = openingBalance.subtract(tx.getAmount());
+            } else {
+                openingBalance = openingBalance.add(tx.getAmount());
+            }
+        }
+
+        // Get transactions for this month, ordered by date
+        List<Transaction> monthTransactions = transactionRepository
+                .findByUserAndTransactionDateBetween(user, start, end)
+                .stream()
+                .sorted(Comparator.comparing(Transaction::getTransactionDate))
+                .toList();
+
+        BigDecimal totalInflow = monthTransactions.stream()
+                .filter(t -> t.getType() == TransactionType.INCOME)
+                .map(Transaction::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        BigDecimal totalOutflow = monthTransactions.stream()
+                .filter(t -> t.getType() == TransactionType.EXPENSE)
+                .map(Transaction::getAmount)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        // Build daily flow
+        Map<LocalDate, List<Transaction>> byDate = monthTransactions.stream()
+                .collect(Collectors.groupingBy(Transaction::getTransactionDate));
+
+        List<DailyCashFlowDTO> dailyFlow = new ArrayList<>();
+        BigDecimal runningBalance = openingBalance;
+
+        for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)) {
+            List<Transaction> dayTransactions = byDate.getOrDefault(date, List.of());
+
+            BigDecimal dayInflow = dayTransactions.stream()
+                    .filter(t -> t.getType() == TransactionType.INCOME)
+                    .map(Transaction::getAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            BigDecimal dayOutflow = dayTransactions.stream()
+                    .filter(t -> t.getType() == TransactionType.EXPENSE)
+                    .map(Transaction::getAmount)
+                    .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+            runningBalance = runningBalance.add(dayInflow).subtract(dayOutflow);
+
+            dailyFlow.add(new DailyCashFlowDTO(
+                    date.toString(),
+                    dayInflow,
+                    dayOutflow,
+                    runningBalance
+            ));
+        }
+
+        BigDecimal closingBalance = runningBalance;
+
+        return new CashFlowDTO(
+                openingBalance,
+                closingBalance,
+                totalInflow,
+                totalOutflow,
+                dailyFlow
         );
     }
 

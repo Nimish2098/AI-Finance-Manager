@@ -2,10 +2,7 @@ package com.project.financeApp.controller;
 
 
 import com.project.financeApp.Service.impl.TransactionServiceImpl;
-import com.project.financeApp.model.dto.DashboardSummaryDTO;
-import com.project.financeApp.model.dto.MonthlySummaryDTO;
-import com.project.financeApp.model.dto.TransactionRequestDTO;
-import com.project.financeApp.model.dto.TransactionResponseDTO;
+import com.project.financeApp.model.dto.*;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -59,5 +56,21 @@ public class TransactionController {
     }
 
 
+    @GetMapping("/trends")
+    public List<TrendDataDTO> getSpendingTrends(
+            @RequestParam String period,  // "daily", "weekly", "monthly"
+            @RequestParam int year,
+            @RequestParam(required = false) Integer month  // only for daily/weekly
+    ) {
+        return transactionService.getSpendingTrends(period, year, month);
+    }
+
+    @GetMapping("/cashflow")
+    public CashFlowDTO getCashFlowAnalysis(
+            @RequestParam int month,
+            @RequestParam int year
+    ) {
+        return transactionService.getCashFlowAnalysis(month, year);
+    }
 }
 
