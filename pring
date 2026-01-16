@@ -1,0 +1,77 @@
+[33mcommit 3fb25aeb0ce6dc8038ae33b4aac4dc93e687cc0d[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m)[m
+Author: Nimish2098 <raonimish23@gmail.com>
+Date:   Thu Jan 15 15:22:03 2026 +0530
+
+    Budget api added
+
+[33mcommit 559f00c5f794f5a6b03d83c4b8b8af347c7e163c[m
+Author: Nimish2098 <raonimish23@gmail.com>
+Date:   Thu Jan 15 14:46:34 2026 +0530
+
+    CacheConfig added
+
+[33mcommit 62268a31461adde4a8e4faf833f45d5223031d6c[m
+Author: Nimish2098 <raonimish23@gmail.com>
+Date:   Thu Jan 15 14:29:36 2026 +0530
+
+    Transactionrepository query section deleted
+
+[33mcommit aada623e07f7511c87f35bc4a2559b8bfaa93fa7[m
+Author: Nimish2098 <raonimish23@gmail.com>
+Date:   Thu Jan 15 14:19:28 2026 +0530
+
+    cashflowdto and spenddto added
+
+[33mcommit d608e9b79aed440101ccc889fd1f2efdc059b582[m
+Author: Nimish2098 <raonimish23@gmail.com>
+Date:   Thu Jan 15 14:05:23 2026 +0530
+
+    cashflowdto and spenddto added
+
+[33mcommit b03fcf19c162099947f34795be9c825b9570cdf3[m
+Author: Nimish2098 <raonimish23@gmail.com>
+Date:   Wed Jan 14 14:16:03 2026 +0530
+
+    frontend url added
+
+[33mcommit abae0c40a9dc21aabb81e59ad1fba05106ef4bdc[m
+Author: Nimish2098 <raonimish23@gmail.com>
+Date:   Wed Jan 14 13:47:12 2026 +0530
+
+    trying to solve issue
+
+[33mcommit 54b668b6ce377fae041837405da3e2e31558d69a[m
+Author: Nimish2098 <raonimish23@gmail.com>
+Date:   Wed Jan 14 13:32:12 2026 +0530
+
+    auth updated
+
+[33mcommit 10602394aff79ac3d89b1fb91cc117e08ea24619[m
+Author: Nimish2098 <raonimish23@gmail.com>
+Date:   Wed Jan 14 00:14:24 2026 +0530
+
+    Dockerfile updated
+
+[33mcommit 925b22114a9a8145925b4cc848b8d9b1cf153eef[m
+Author: Nimish2098 <raonimish23@gmail.com>
+Date:   Tue Jan 13 23:58:18 2026 +0530
+
+    application.yml push
+
+[33mcommit 0bf814528a47bf4a933947f0dbacb25e590fdcdc[m
+Author: Nimish2098 <raonimish23@gmail.com>
+Date:   Tue Jan 13 23:47:39 2026 +0530
+
+    Final Pus
+
+[33mcommit 15f84428eed9af03ee6448e11aea0af584650c7e[m
+Author: Nimish2098 <raonimish23@gmail.com>
+Date:   Tue Jan 13 22:51:15 2026 +0530
+
+    README.md updated
+
+[33mcommit c162313262283cfb7e2303d2b564c8300d86bc6d[m
+Author: Nimish2098 <raonimish23@gmail.com>
+Date:   Tue Jan 13 22:40:53 2026 +0530
+
+    Project Structure changed

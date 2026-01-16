@@ -34,3 +34,8 @@ build/
 
 .env.local
 application-prod.yml
+docker-compose.yml
+
+src/main/resources/application-local.yml
+pring
+how-sql true
