@@ -18,7 +18,7 @@ public class Budget {
     private UUID id;
 
     @Column(nullable = false)
-    private BigDecimal limitAmount;
+    private BigDecimal budgetAmount;
 
     private int month;
     private int year;

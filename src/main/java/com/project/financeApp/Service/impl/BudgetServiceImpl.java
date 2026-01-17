@@ -127,7 +127,7 @@ public class BudgetServiceImpl implements BudgetService {
                 .findByIdAndUser(request.categoryId(), user)
                 .orElseThrow(() -> new RuntimeException("Category not found"));
 
-        budget.setLimitAmount(request.limitAmount());
+        budget.setBudgetAmount(request.budgetAmount());
         budget.setMonth(request.month());
         budget.setYear(request.year());
         budget.setCategory(category);
@@ -166,14 +166,14 @@ public class BudgetServiceImpl implements BudgetService {
                 .orElseThrow(() -> new RuntimeException("Budget not found"));
 
         BigDecimal spentAmount = calculateSpentAmount(budget, user);
-        BigDecimal remainingAmount = budget.getLimitAmount().subtract(spentAmount);
-        boolean isExceeded = spentAmount.compareTo(budget.getLimitAmount()) > 0;
+        BigDecimal remainingAmount = budget.getBudgetAmount().subtract(spentAmount);
+        boolean isExceeded = spentAmount.compareTo(budget.getBudgetAmount()) > 0;
 
         // Calculate percentage used
         double percentageUsed = 0.0;
-        if (budget.getLimitAmount().compareTo(BigDecimal.ZERO) > 0) {
+        if (budget.getBudgetAmount().compareTo(BigDecimal.ZERO) > 0) {
             percentageUsed = spentAmount
-                    .divide(budget.getLimitAmount(), 4, RoundingMode.HALF_UP)
+                    .divide(budget.getBudgetAmount(), 4, RoundingMode.HALF_UP)
                     .multiply(BigDecimal.valueOf(100))
                     .doubleValue();
         }
@@ -181,7 +181,7 @@ public class BudgetServiceImpl implements BudgetService {
         return new BudgetStatusDTO(
                 budget.getId(),
                 budget.getCategory().getName(),
-                budget.getLimitAmount(),
+                budget.getBudgetAmount(),
                 spentAmount,
                 remainingAmount,
                 percentageUsed,

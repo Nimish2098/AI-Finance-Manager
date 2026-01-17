@@ -8,7 +8,7 @@ public record BudgetResponseDTO(
         UUID id,
         UUID categoryId,      // needed for editing
         String categoryName,
-        BigDecimal limitAmount,
+        BigDecimal budgetAmount,
         BigDecimal spentAmount,
         int month,
         int year

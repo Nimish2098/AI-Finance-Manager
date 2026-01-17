@@ -5,7 +5,7 @@ import java.util.UUID;
 
 public record BudgetRequestDTO(
         UUID categoryId,
-        BigDecimal limitAmount,
+        BigDecimal budgetAmount,
         int month,
         int year
 ) {}

@@ -39,3 +39,5 @@ docker-compose.yml
 src/main/resources/application-local.yml
 pring
 how-sql true
+
+README_RUN.md

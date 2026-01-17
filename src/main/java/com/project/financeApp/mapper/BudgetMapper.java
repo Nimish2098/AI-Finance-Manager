@@ -18,7 +18,7 @@ public class BudgetMapper {
             Category category
     ) {
         return Budget.builder()
-                .limitAmount(dto.limitAmount())
+                .budgetAmount(dto.budgetAmount())
                 .month(dto.month())
                 .year(dto.year())
                 .user(user)
@@ -31,7 +31,7 @@ public class BudgetMapper {
                 entity.getId(),
                 entity.getCategory().getId(),
                 entity.getCategory().getName(),
-                entity.getLimitAmount(),
+                entity.getBudgetAmount(),
                 spentAmount,
                 entity.getMonth(),
                 entity.getYear()

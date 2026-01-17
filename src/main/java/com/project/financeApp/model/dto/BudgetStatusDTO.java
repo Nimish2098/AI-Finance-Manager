@@ -7,7 +7,7 @@ import java.util.UUID;
 public record BudgetStatusDTO(
         UUID budgetId,
         String categoryName,
-        BigDecimal limitAmount,
+        BigDecimal budgetAmount,
         BigDecimal spentAmount,
         BigDecimal remainingAmount,
         double percentageUsed,
