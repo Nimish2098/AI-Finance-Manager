@@ -9,19 +9,27 @@ import com.project.financeApp.repository.AccountRepository;
 import com.project.financeApp.repository.CategoryRepository;
 import com.project.financeApp.repository.TransactionRepository;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
 import java.time.temporal.WeekFields;
 import java.util.Locale;
 import java.util.stream.Collectors;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.HashMap;
@@ -36,6 +44,7 @@ public class TransactionServiceImpl implements TransactionService {
     private final AccountRepository accountRepository;
     private final CategoryRepository categoryRepository;
     private final UserService userService;
+
 
     @Override
     public TransactionResponseDTO createTransaction(TransactionRequestDTO request) {
@@ -436,6 +445,142 @@ public class TransactionServiceImpl implements TransactionService {
         );
     }
 
+
+
+
+    public ByteArrayInputStream exportTransactions(String format) throws IOException {
+        User user = userService.getCurrentUser();
+        List<Transaction> transactions = transactionRepository.findAllByUser(user);
+
+        if ("csv".equalsIgnoreCase(format)) {
+            return exportToCsv(transactions);
+        } else if ("xlsx".equalsIgnoreCase(format)) {
+            return exportToXlsx(transactions);
+        } else {
+            throw new IllegalArgumentException("Unsupported export format");
+        }
+    }
+
+    private ByteArrayInputStream exportToCsv(List<Transaction> transactions) {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Date,Amount,Type,Category,Account,Description\n");
+
+        for (Transaction t : transactions) {
+            sb.append(t.getTransactionDate()).append(",")
+                    .append(t.getAmount()).append(",")
+                    .append(t.getType()).append(",")
+                    .append(t.getCategory() != null ? t.getCategory().getName() : "").append(",")
+                    .append(t.getAccount() != null ? t.getAccount().getName() : "").append(",")
+                    .append(t.getDescription() != null ? t.getDescription() : "")
+                    .append("\n");
+        }
+
+        return new ByteArrayInputStream(sb.toString().getBytes(StandardCharsets.UTF_8));
+    }
+
+    private ByteArrayInputStream exportToXlsx(List<Transaction> transactions) throws IOException {
+        Workbook workbook = new XSSFWorkbook();
+        Sheet sheet = workbook.createSheet("Transactions");
+
+        Row header = sheet.createRow(0);
+        String[] columns = {"Date", "Amount", "Type", "Category", "Account", "Description"};
+
+        for (int i = 0; i < columns.length; i++) {
+            header.createCell(i).setCellValue(columns[i]);
+        }
+
+        int rowIdx = 1;
+        for (Transaction t : transactions) {
+            Row row = sheet.createRow(rowIdx++);
+            row.createCell(0).setCellValue(t.getTransactionDate().toString());
+            row.createCell(1).setCellValue(t.getAmount().doubleValue());
+            row.createCell(2).setCellValue(t.getType().name());
+            row.createCell(3).setCellValue(t.getCategory() != null ? t.getCategory().getName() : "");
+            row.createCell(4).setCellValue(t.getAccount() != null ? t.getAccount().getName() : "");
+            row.createCell(5).setCellValue(t.getDescription() != null ? t.getDescription() : "");
+        }
+
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        workbook.write(out);
+        workbook.close();
+
+        return new ByteArrayInputStream(out.toByteArray());
+    }
+
+
+
+    @Transactional
+    public void importFromCsv(MultipartFile file) {
+        User user = userService.getCurrentUser();
+
+        try (BufferedReader reader = new BufferedReader(
+                new InputStreamReader(file.getInputStream(), StandardCharsets.UTF_8))) {
+
+            String line;
+            boolean skipHeader = true;
+
+            while ((line = reader.readLine()) != null) {
+                if (skipHeader) {
+                    skipHeader = false;
+                    continue;
+                }
+
+                // LIMIT split to 6 columns (prevents comma issues in description)
+                String[] data = line.split(",", 6);
+
+                Transaction transaction = Transaction.builder()
+                        .transactionDate(LocalDate.parse(data[0].trim()))
+                        .amount(new BigDecimal(data[1].trim()))
+                        .type(TransactionType.valueOf(data[2].trim().toUpperCase()))
+                        .category(findOrCreateCategory(data[3], user))
+                        .account(findOrCreateAccount(data[4], user))
+                        .description(data.length == 6 ? data[5].trim() : null)
+                        .user(user)
+                        .build();
+
+                transactionRepository.save(transaction);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace(); // KEEP THIS while debugging
+            throw new RuntimeException("Failed to import CSV file", e);
+        }
+    }
+
+    private Category findOrCreateCategory(String name, User user) {
+        if (name == null || name.trim().isEmpty()) return null;
+
+        return categoryRepository.findByNameAndUser(name.trim(), user)
+                .orElseGet(() -> categoryRepository.save(
+                        Category.builder()
+                                .name(name.trim())
+                                .user(user)
+                                .build()
+                ));
+    }
+    private Account findOrCreateAccount(String name, User user) {
+        if (name == null || name.trim().isEmpty()) return null;
+
+        return accountRepository.findByNameAndUser(name.trim(), user)
+                .orElseGet(() -> accountRepository.save(
+                        Account.builder()
+                                .name(name.trim())
+                                .user(user)
+                                .build()
+                ));
+    }
+
+    private Category findCategory(String name, User user) {
+        if (name == null || name.isBlank()) return null;
+        return categoryRepository.findByNameAndUser(name, user)
+                .orElse(null);
+    }
+
+    private Account findAccount(String name, User user) {
+        if (name == null || name.isBlank()) return null;
+        return accountRepository.findByNameAndUser(name, user)
+                .orElse(null);
+    }
 
 }
 

@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/categories")
@@ -27,6 +28,11 @@ public class CategoryController {
     public List<CategoryResponseDTO> getAllCategories() {
 
         return categoryService.getAllCategories();
+    }
+
+    @DeleteMapping
+    public void deleteCategory(@PathVariable UUID id){
+        categoryService.deleteCategory(id);
     }
 }
 

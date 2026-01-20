@@ -12,6 +12,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -37,5 +39,25 @@ public class CategoryServiceImpl implements CategoryService {
                 .map(CategoryMapper::toResponse)
                 .toList();
     }
+
+    @Override
+    public CategoryResponseDTO updateCategory(UUID categoryID, CategoryRequestDTO request) {
+        return null;
+    }
+
+    @Override
+    public void deleteCategory(UUID categoryId) {
+        User user = userService.getCurrentUser();
+
+        Category category = categoryRepository
+                .findByIdAndUser(categoryId, user)
+                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        categoryRepository.delete(category);
+    }
+
+
+
+
 }
 
