@@ -6,5 +6,7 @@ import com.project.financeApp.model.entity.User;
 public interface UserService {
 
     User getCurrentUser();
+
+    User updateUser(Long id);
 }
 
