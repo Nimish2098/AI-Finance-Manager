@@ -33,14 +33,27 @@ public class SecurityConfig {
                         sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
+                        // Allow CORS preflight
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+
+                        // Allow actuator (GET)
+                        .requestMatchers(
+                                "/actuator/health",
+                                "/actuator/metrics",
+                                "/actuator/metrics/**"
+                        ).permitAll()
+
+                        // Allow auth APIs
                         .requestMatchers("/auth/**").permitAll()
+
+                        // Everything else secured
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
+
 
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
