@@ -32,7 +32,12 @@ public class TransactionController {
     }
 
 
-
+    @GetMapping
+    public List<TransactionResponseDTO> getAllTransactions(
+            @RequestBody TransactionRequestDTO responseDTO
+    ){
+        return transactionService.getAllTransactions();
+    }
     @GetMapping("/paged")
     public Page<TransactionResponseDTO> getTransactions(
             @RequestParam(defaultValue = "0") int page,
