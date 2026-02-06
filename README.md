@@ -18,6 +18,8 @@ https://frontendfinapp.vercel.app/
 - Maven
 - PostgreSQL Database running locally
 
+## ER Diagram
+[![View on Eraser](https://app.eraser.io/workspace/u1auprUp60SpSpITMV22/preview?diagram=gK-914SqUivyQa4j1hL0L&type=embed)](https://app.eraser.io/workspace/u1auprUp60SpSpITMV22?diagram=gK-914SqUivyQa4j1hL0L)
 ## ⚙️ Configuration
 
 The application is configured to connect to a local PostgreSQL database. Ensure your database is running and verify the settings in `src/main/resources/application.yml`:
